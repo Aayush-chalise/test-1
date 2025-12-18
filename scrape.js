@@ -1,6 +1,6 @@
 // npm i axios cheerio
 import axios from "axios";
- const cheerio = require("cheerio");
+const cheerio = require("cheerio");
 const fs = require("fs");
 const path = require("path");
 
@@ -31,15 +31,16 @@ async function scrapeIndex() {
   const html = await fetchHtml(INDEX);
   if (!html) throw new Error("Failed to fetch index page");
 
-  const $ = cheerio.load(html); //parses the html and returns a $ function that you use/manipulate the html 
+  const $ = cheerio.load(html); //parses the html and returns a $ function that you use/manipulate the html
   // if i do $("p") this will return a cheerio like object that contains all the p tags, you can access them by indexing like in the array.
 
   // DEBUG: show some html snippet so you can inspect locally
   // console.log(html.slice(0, 2000));
 
   // Strategy: pick links that look like article links
-  const links =  new Set();  //Creates a Set to store links. A Set is like an array but doesn’t allow duplicates. This ensures you don’t get the same link twice.
-  $("a[href]").each((i, el) => {   //selects all the anchor tags <a> with an href attribute 
+  const links = new Set(); //Creates a Set to store links. A Set is like an array but doesn’t allow duplicates. This ensures you don’t get the same link twice.
+  $("a[href]").each((i, el) => {
+    //selects all the anchor tags <a> with an href attribute
     const href = $(el).attr("href");
     if (!href) return;
     // common ekantipur pattern: /news/... or /news/<slug>-<id> or links that contain '/news/'
@@ -49,7 +50,7 @@ async function scrapeIndex() {
     // alternative: some articles may be under /page/... adapt if you see different patterns
   });
 
-  const arr = Array.from(links);
+  const arr = Array.from(links); // converts the Set back to an array for easier handling
   console.log(
     "Found",
     arr.length,
@@ -60,6 +61,7 @@ async function scrapeIndex() {
 }
 
 async function parseArticle(url) {
+  console.log(url);
   const html = await fetchHtml(url);
   if (!html) return null;
   const $ = cheerio.load(html);
